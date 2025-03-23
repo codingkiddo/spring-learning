@@ -12,12 +12,12 @@ public class Main01 {
 
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 
-		context.getEnvironment().setActiveProfiles("prod");
+		context.getEnvironment().setActiveProfiles("test");
 
 		context.register(DataSourceConfig.class);
 		context.refresh();
 
-		DataSource dataSource = context.getBean(DataSource.class);
+		DataSource dataSource = context.getBean(javax.sql.DataSource.class);
 		System.out.println(dataSource.toString());
 
 		context.close();
