@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jndi.JndiObjectFactoryBean;
 
 @Configuration
 public class DataSourceConfig {
@@ -23,14 +24,24 @@ public class DataSourceConfig {
 	
 	@Bean
 	@Profile("prod")
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("org.hibernate.dialect.MySQLDialect");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/taco?useSSL=false");
-        dataSource.setUsername("root");
-        dataSource.setPassword("12345678");
-        return dataSource;
+	public DataSource dataSourceJndi() {
+		JndiObjectFactoryBean jndiObjectFactoryBean = new JndiObjectFactoryBean();
+		jndiObjectFactoryBean.setJndiName("jdbc/myDatabase");
+		jndiObjectFactoryBean.setResourceRef(true);
+		jndiObjectFactoryBean.setProxyInterface(javax.sql.DataSource.class);
+		return (DataSource) jndiObjectFactoryBean.getObject();
 	}
+	
+//	@Bean
+//	@Profile("prod")
+//	public DataSource dataSourceMySQL() {
+//		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//		dataSource.setDriverClassName("org.hibernate.dialect.MySQLDialect");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/taco?useSSL=false");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("12345678");
+//        return dataSource;
+//	}
 	
 	@Bean(destroyMethod="close")
 	@Profile("test")
